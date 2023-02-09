@@ -7,15 +7,10 @@ import (
 )
 
 var Module = fx.Options(
-	fx.Provide(func(database *database.Client) *healthcheck.HealthCheck {
+	fx.Provide(func(database *database.Client) *healthcheck.Service {
 		instance := healthcheck.New()
 
-		instance.Append(
-			healthcheck.Runner{
-				Name:       "database",
-				Evaluation: database.Ping,
-			},
-		)
+		instance.Append("database", database.Ping)
 
 		return instance
 	}),
