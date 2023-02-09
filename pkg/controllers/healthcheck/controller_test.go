@@ -1,4 +1,4 @@
-package controllers
+package healthcheck
 
 import (
 	"errors"
@@ -17,7 +17,7 @@ func TestHealthCheck(t *testing.T) {
 		logger := zap.NewExample()
 		service := healthcheck.New()
 
-		HealthCheck(router, service, logger)
+		Controller(router, service, logger)
 
 		request, err := http.NewRequest("GET", "/healthz", nil)
 
@@ -39,18 +39,16 @@ func TestHealthCheck(t *testing.T) {
 	t.Run("A failed runner generates the error status code", func(t *testing.T) {
 		router := gin.Default()
 		logger := zap.NewExample()
+
 		service := healthcheck.New()
 
-		service.Append(
-			healthcheck.Runner{
-				Name: "mock",
-				Evaluation: func() error {
-					return errors.New("mock-error")
-				},
-			},
-		)
+		mock := func() error {
+			return errors.New("mock-error")
+		}
 
-		HealthCheck(router, service, logger)
+		service.Append("mock", mock)
+
+		Controller(router, service, logger)
 
 		request, err := http.NewRequest("GET", "/healthz", nil)
 

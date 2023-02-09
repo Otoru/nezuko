@@ -1,4 +1,4 @@
-package controllers
+package healthcheck
 
 import (
 	"net/http"
@@ -8,7 +8,7 @@ import (
 	"go.uber.org/zap"
 )
 
-func HealthCheck(router *gin.Engine, service *healthcheck.HealthCheck, logger *zap.Logger) {
+func Controller(router *gin.Engine, service *healthcheck.Service, logger *zap.Logger) {
 	router.GET("/healthz", func(ctx *gin.Context) {
 		status := http.StatusNoContent
 

@@ -4,20 +4,20 @@ import (
 	"go.uber.org/zap"
 )
 
-type Runner struct {
+type runner struct {
 	Name       string
 	Evaluation func() error
 }
 
-type HealthCheck struct {
-	services []Runner
+type Service struct {
+	services []runner
 }
 
-func (service *HealthCheck) Append(runner Runner) {
-	service.services = append(service.services, runner)
+func (service *Service) Append(name string, evaluation func() error) {
+	service.services = append(service.services, runner{Name: name, Evaluation: evaluation})
 }
 
-func (service *HealthCheck) Validate(logger *zap.Logger) error {
+func (service *Service) Validate(logger *zap.Logger) error {
 	for _, item := range service.services {
 		err := item.Evaluation()
 
@@ -31,7 +31,7 @@ func (service *HealthCheck) Validate(logger *zap.Logger) error {
 	return nil
 }
 
-func New() *HealthCheck {
-	instance := &HealthCheck{}
+func New() *Service {
+	instance := &Service{}
 	return instance
 }
